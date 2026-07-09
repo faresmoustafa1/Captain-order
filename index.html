@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Captain Order</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="splashScreen" class="screen splash-screen" aria-label="Captain Order loading screen">
+      <h1 class="brand-logo">Captain Order</h1>
+    </section>
+
+    <section id="languageScreen" class="screen language-screen is-hidden" aria-label="Choose language">
+      <div class="picker-wrap">
+        <div class="fade fade-top" aria-hidden="true"></div>
+        <div id="languageWheel" class="language-wheel" role="listbox" aria-label="Available languages"></div>
+        <div class="selection-band" aria-hidden="true"></div>
+        <div class="fade fade-bottom" aria-hidden="true"></div>
+      </div>
+
+      <button id="selectButton" class="select-button" type="button">Select</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
