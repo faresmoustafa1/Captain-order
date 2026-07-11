@@ -9,14 +9,28 @@ const languages = [
   { code: "zh", label: "中文", button: "选择" }
 ];
 
+// Point this at your backend. Change it once you deploy the FastAPI server.
+const AGENT_API_URL = "http://localhost:8000/chat";
+
 const splashScreen = document.querySelector("#splashScreen");
 const languageScreen = document.querySelector("#languageScreen");
 const languageWheel = document.querySelector("#languageWheel");
 const selectButton = document.querySelector("#selectButton");
 
+const agentScreen = document.querySelector("#agentScreen");
+const chatMessages = document.querySelector("#chatMessages");
+const chatTyping = document.querySelector("#chatTyping");
+const chatForm = document.querySelector("#chatForm");
+const chatInput = document.querySelector("#chatInput");
+const chatSend = document.querySelector("#chatSend");
+
 let selectedIndex = 1;
 let startY = 0;
 let isDragging = false;
+
+// Conversation state for the AI agent
+let conversationHistory = []; // [{ role: "user" | "assistant", content: string }]
+let selectedLanguageCode = "en";
 
 function showLanguageScreen() {
   splashScreen.classList.add("is-hidden");
@@ -108,12 +122,92 @@ document.addEventListener("keydown", (event) => {
 
 selectButton.addEventListener("click", () => {
   const selectedLanguage = languages[selectedIndex];
+  selectedLanguageCode = selectedLanguage.code;
 
   localStorage.setItem("captainOrderLanguage", selectedLanguage.code);
 
-  // Your colleague can replace this line with:
-  // window.location.href = `menu.html?lang=${selectedLanguage.code}`;
-  alert(`Selected language: ${selectedLanguage.label}`);
+  showAgentScreen();
+});
+
+// ---------- AI agent chat ----------
+
+function showAgentScreen() {
+  languageScreen.classList.add("is-hidden");
+  agentScreen.classList.remove("is-hidden");
+
+  // Right-align the chat for Arabic
+  agentScreen.dir = selectedLanguageCode === "ar" ? "rtl" : "ltr";
+
+  requestWelcomeMessage();
+  chatInput.focus();
+}
+
+function addBubble(role, text) {
+  const bubble = document.createElement("div");
+  bubble.className = `chat-bubble ${role}`;
+  bubble.textContent = text;
+  chatMessages.appendChild(bubble);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return bubble;
+}
+
+function setTyping(isTyping) {
+  chatTyping.classList.toggle("is-hidden", !isTyping);
+  chatSend.disabled = isTyping;
+  chatInput.disabled = isTyping;
+  if (isTyping) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+async function callAgent() {
+  setTyping(true);
+
+  try {
+    const response = await fetch(AGENT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        language: selectedLanguageCode,
+        messages: conversationHistory
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server responded with ${response.status}`);
+    }
+
+    const data = await response.json();
+    conversationHistory.push({ role: "assistant", content: data.reply });
+    addBubble("assistant", data.reply);
+  } catch (error) {
+    console.error("Agent request failed:", error);
+    addBubble(
+      "assistant",
+      "Sorry, I couldn't reach the assistant right now. Please make sure the backend server is running."
+    );
+  } finally {
+    setTyping(false);
+    chatInput.focus();
+  }
+}
+
+function requestWelcomeMessage() {
+  // No history yet — the backend will make the model open the conversation.
+  callAgent();
+}
+
+chatForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  conversationHistory.push({ role: "user", content: text });
+  addBubble("user", text);
+  chatInput.value = "";
+
+  callAgent();
 });
 
 setTimeout(showLanguageScreen, 3000);
