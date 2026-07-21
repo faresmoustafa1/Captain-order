@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Captain Order · Fine Dining</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B08D57'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Georgia,serif' font-style='italic' text-anchor='middle' fill='%23FBF7EE'%3EC%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css?v=15" />
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("captainOrderTheme");
+        if (!saved) {
+          saved = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", saved);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+    </svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+    </svg>
+  </button>
+
+  <main class="app-shell">
+    <section id="splashScreen" class="screen splash-screen" aria-label="Captain Order loading screen">
+      <span class="brand-eyebrow" aria-hidden="true">Fine Dining</span>
+      <h1 class="brand-logo">Captain Order</h1>
+      <span class="brand-ornament" aria-hidden="true">&#10086;</span>
+      <span class="brand-tagline">A curated culinary experience</span>
+    </section>
+
+    <section id="languageScreen" class="screen language-screen is-hidden" aria-label="Choose language">
+      <div class="picker-wrap">
+        <div class="fade fade-top" aria-hidden="true"></div>
+        <div id="languageWheel" class="language-wheel" role="listbox" aria-label="Available languages"></div>
+        <div class="selection-band" aria-hidden="true"></div>
+        <div class="fade fade-bottom" aria-hidden="true"></div>
+      </div>
+      <button id="selectButton" class="select-button" type="button">Select</button>
+    </section>
+
+    <section id="menuScreen" class="screen menu-screen is-hidden" aria-label="Menu">
+      <div class="menu-main">
+        <header class="menu-header">
+          <div class="menu-header-text">
+            <span class="brand-eyebrow" aria-hidden="true">Fine Dining</span>
+            <h2 class="menu-title">Captain Order</h2>
+            <span class="menu-subtitle">Our Menu &middot; Est. 2026</span>
+          </div>
+        </header>
+
+        <div class="menu-hero">
+          <div class="menu-hero-media" aria-hidden="true"></div>
+          <div class="menu-hero-overlay">
+            <span class="brand-eyebrow">Fine Dining &middot; Est. 2026</span>
+            <h2 class="menu-hero-title">Captain Order</h2>
+            <p class="menu-hero-tagline">A curated tasting of the season's finest</p>
+          </div>
+        </div>
+
+        <div class="menu-toolbar">
+          <div class="menu-search">
+            <svg class="menu-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg>
+            <input id="menuSearch" class="menu-search-input" type="search" placeholder="Search dishes or ingredients…" aria-label="Search the menu" autocomplete="off" />
+          </div>
+          <nav id="menuTabs" class="menu-tabs" role="tablist" aria-label="Menu categories"></nav>
+        </div>
+
+        <div id="menuList" class="menu-list" aria-live="polite">
+          <div class="menu-loading">Loading menu&hellip;</div>
+        </div>
+      </div>
+
+      <aside id="cartPanel" class="cart-panel" aria-label="Your order">
+        <header class="cart-panel-header">
+          <div class="cart-panel-titles">
+            <span class="brand-eyebrow" aria-hidden="true">Your Order</span>
+            <h3 class="cart-panel-title">Order Summary</h3>
+          </div>
+          <button id="cartCloseBtn" class="cart-close-btn" type="button" aria-label="Close order panel" title="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+
+        <div id="cartLines" class="cart-lines" aria-live="polite">
+          <div class="cart-empty">
+            <span class="cart-empty-ornament" aria-hidden="true">&#10086;</span>
+            <p>Your order is empty.</p>
+            <p class="cart-empty-hint">Tap the <span class="pill">+</span> next to any dish to add it here.</p>
+          </div>
+        </div>
+
+        <footer class="cart-panel-footer">
+          <div class="cart-panel-total">
+            <span class="cart-panel-total-label">Subtotal</span>
+            <span id="cartSubtotal" class="cart-panel-total-value">$0.00</span>
+          </div>
+          <button id="confirmOrderBtn" class="cart-confirm" type="button" disabled>
+            Confirm via Concierge
+          </button>
+        </footer>
+      </aside>
+
+      <button id="openCartBtn" class="open-cart-btn" type="button" aria-label="Open order summary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6L18 2z" />
+          <path d="M3 6h18" />
+          <path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+        <span id="openCartCount" class="open-cart-count">0</span>
+      </button>
+
+      <button id="chatFab" class="chat-fab" type="button" aria-label="Chat with the concierge" title="Chat with the concierge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a2 2 0 0 1-2 2H8l-5 4V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span class="chat-fab-label">Concierge</span>
+      </button>
+    </section>
+
+    <div id="chatOverlay" class="chat-overlay is-hidden" role="dialog" aria-modal="true" aria-labelledby="chatOverlayTitle">
+      <div class="chat-panel">
+        <header class="chat-header">
+          <span class="chat-header-dot" aria-hidden="true"></span>
+          <div class="chat-header-text">
+            <h2 id="chatOverlayTitle" class="chat-header-title">Captain Order</h2>
+            <span class="chat-header-subtitle">Your Concierge</span>
+          </div>
+          <button id="chatCloseBtn" class="chat-close" type="button" aria-label="Close chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+
+        <div id="chatMessages" class="chat-messages" role="log" aria-live="polite"></div>
+
+        <div id="chatTyping" class="chat-typing is-hidden" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+
+        <form id="chatForm" class="chat-input-row">
+          <input id="chatInput" class="chat-input" type="text" autocomplete="off" placeholder="Type your message…" aria-label="Message" />
+          <button id="chatSend" class="chat-send" type="submit" aria-label="Send">➤</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="script.js?v=15"></script>
+</body>
+</html>
